@@ -60,3 +60,6 @@ Temporary Items
 
 # Simulink Code Generation
 slprj/
+
+Data Files
+*.csv

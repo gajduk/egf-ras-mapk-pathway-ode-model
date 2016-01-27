@@ -1,6 +1,4 @@
 function dx = ode_model1(t,x)
-%ODE_MODEL Summary of this function goes here
-%   Detailed explanation goes here
 
 %input signal, can be a funciton of t
 u = 1;
