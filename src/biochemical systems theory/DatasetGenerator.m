@@ -34,7 +34,6 @@ classdef DatasetGenerator < handle
                     instance.t = t;
                     instance.y = y;
                     res{i} = instance;
-                    i
                 end
             end
         end

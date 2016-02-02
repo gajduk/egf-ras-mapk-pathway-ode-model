@@ -1,15 +1,2 @@
-clear all
-generator = DatasetGenerator();
-dataset = generator.generate(     ...
-    100,                 ...
-    @()  14,             ...
-    @()  randi(3)-1,             ...
-    @()  randi(4)-1,             ...
-    @()  randi(7)-1);
-
-for k=1:5
-    i = randi(100);
-    figure;
-    plot(dataset{i}.t,dataset{i}.y);
-    title(sprintf('%d Short pulse',i))
-end
+dataset = Dataset.loadDefault();
+dataset.dumpAsCsv('out',12);
