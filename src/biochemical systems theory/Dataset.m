@@ -8,6 +8,7 @@ classdef Dataset < handle
         function self = Dataset(instances)
            self.instances = instances; 
         end
+        
         function dumpAsCsv(self,csv_filename,number_of_timepoints)
             X = [];
             Y = [];
@@ -16,10 +17,10 @@ classdef Dataset < handle
             for i=1:length(self.instances)
                 instance = self.instances{i};
                 max_time = max(instance.t)-1;
-                delta_t = max_time/number_of_timepoints;
+                delta_t = max_time/(number_of_timepoints-1);
 
-                for i=1:number_of_timepoints
-                    idxs(i) = find(instance.t>(delta_t*i),1);
+                for i=0:number_of_timepoints-1
+                    idxs(i+1) = find(instance.t>(delta_t*i),1);
                 end
                 x = instance.pin.f(:);
                 y = instance.y(idxs,:);
