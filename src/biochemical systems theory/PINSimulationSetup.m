@@ -6,6 +6,7 @@ classdef PINSimulationSetup < handle
     properties
         input = -1;%function that shows the concentration of input (ligand) over time
         inhibit = -1;%inhibition function
+        inhibit_label = -1;%inhibition function
         end_time = -1;
     end
     
@@ -14,10 +15,12 @@ classdef PINSimulationSetup < handle
             self.end_time = end_time;
             self.input = input;
             if nargin < 3
-                self.inhibit = @(t,x) x;
+                temp_inhibit = PINSimulationSetup.getNoInhibition();
             else
-                self.inhibit = inhibit;                
+                temp_inhibit = inhibit;          
             end
+            self.inhibit = temp_inhibit.f;
+            self.inhibit_label = temp_inhibit.label;
         end
     end
     
@@ -46,13 +49,16 @@ classdef PINSimulationSetup < handle
            end
         end
         
-        function inhibit = getInhibitionOfOneProtein(protein_idx,time)
-            inhibit = @(t,x,dx) PINSimulationSetup.inhibitOneProtein(t,x,dx,protein_idx,time);
+        function res = getInhibitionOfOneProtein(protein_idx,time)
+            res = {};
+            res.label = sprintf('InhibitOneProtein_%d',protein_idx);
+            res.f = @(t,x,dx) PINSimulationSetup.inhibitOneProtein(t,x,dx,protein_idx,time);
         end
               
-        
         function res = getNoInhibition()
-            res = @(t,x,dx) dx;
+            res = {};
+            res.f = @(t,x,dx) dx;
+            res.label = 'NoInhibition';
         end
     end
     

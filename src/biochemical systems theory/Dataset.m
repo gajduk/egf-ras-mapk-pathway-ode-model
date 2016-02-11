@@ -9,7 +9,19 @@ classdef Dataset < handle
            self.instances = instances; 
         end
         
+        function dumpJson(self,json_filename)
+            previouswd = pwd;
+            full_filename = strcat('..\..\output\',json_filename);
+            fid = fopen(full_filename,'wt');
+            fprintf(fid, savejson(self.instances));
+            fclose(fid);
+            zip(strcat(full_filename,'.zip'),full_filename);
+            cd(previouswd);
+        end
+        
+        
         function dumpAsCsv(self,csv_filename,number_of_timepoints)
+            %Depracated
             X = [];
             Y = [];
             idxs = zeros(1,number_of_timepoints);
@@ -35,6 +47,7 @@ classdef Dataset < handle
     
     methods (Static)
         function dataset = loadDefault()
+            %Depracated
             temp = load('100_instances_14_nodes_29_01_16.mat');
             dataset = Dataset(temp.dataset);
         end

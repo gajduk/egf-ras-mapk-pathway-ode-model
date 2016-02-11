@@ -23,7 +23,7 @@ classdef DatasetGenerator < handle
             simple_simulation_setup = PINSimulationSetup(end_time,input,inhibition);
             
             
-            for network_idx=1:number_of_networks
+            parfor network_idx=1:number_of_networks
                 %----------------------------------------------
                 %-- generate a good random network           --
                 %----------------------------------------------
@@ -50,7 +50,8 @@ classdef DatasetGenerator < handle
                    [t,y] = simulation.run();
                    simulation_results = {};
                    simulation_results.t = t;
-                   simulation_results.y = y;
+                   simulation_results.y = real(y);
+                   simulation_results.inhibit = pin_simulation_setup.inhibit_label;
                    pin_simulation_results{setup_idx} = simulation_results;
                 end
                 res{network_idx} = Instance(pin,pin_simulation_results);
