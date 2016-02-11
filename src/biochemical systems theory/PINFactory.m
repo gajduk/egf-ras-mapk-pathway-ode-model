@@ -1,11 +1,11 @@
-classdef PINetworkFactory < handle
+classdef PINFactory < handle
     %PINETWORKFACTORY Constructs random or specific PINetworks
     
     properties
     end
     
     methods
-        function self = PINetworkFactory()
+        function self = PINFactory()
         end
         
         function pinetwork = getYeast3PIN(self)
@@ -22,7 +22,16 @@ classdef PINetworkFactory < handle
                                    -1, 0, 0]);
         end
         
-        function pinetwork = getRandomNetwork(self,n,A_g_gen,D_g_gen,f_gen,k,n_positive_feedback,n_negative_feedback)
+        function random_pin_generator = getRandomNetworkGenerator(self,n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen)
+            random_pin_generator =  @() self.getRandomNetwork(n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen);
+        end
+        
+        function pinetwork = getRandomNetwork(self,n_nodes_gen,A_g_gen,D_g_gen,f_gen,k_gen,n_positive_feedback_gen,n_negative_feedback_gen)
+           n = n_nodes_gen();
+           k = k_gen();
+           n_positive_feedback = n_positive_feedback_gen();
+           n_negative_feedback = n_negative_feedback_gen();
+           
            %(de)-activation coefficients
            A_g = A_g_gen(n);
            D_g = D_g_gen(n);
@@ -61,9 +70,10 @@ classdef PINetworkFactory < handle
            %input activation
            I_f = zeros(1,n);
            I_f(1) = 1;
-           pinetwork = PINetwork(n,A_g,D_g,A_f_s,D_f_s,I_f,f);
+           pinetwork = PIN(n,A_g,D_g,A_f_s,D_f_s,I_f,f);
         end
     end
     
 end
+
 

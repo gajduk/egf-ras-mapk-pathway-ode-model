@@ -1,59 +1,66 @@
-classdef DatasetGenerator < handle
-    %DATASETGENERATOR Summary of this class goes here
-    %   Detailed explanation goes here
-    
+classdef DatasetGenerator < handle    
     properties
         
     end
     
-    methods(Static)
-        function input = oscilatory_input()
-            input = @(t) (cos(t/10)+1)/2;
-        end
-        function input = pulse_input(duration)
-            input = @(t) t<duration;
-        end
-        function input = continous(duration)
-            input = @(t) t<duration;
-        end
-         
-    end
     
     methods
         function self = DatasetGenerator()
             
         end
         
-        function res = generate(self,number_of_networks,input,n_gen,n_branches_gen,n_positive_links_gen,n_negative_links_gen)
+        function res = generate(self,number_of_networks,pin_simulation_setups,pin_generator)
+            
             res = cell(number_of_networks,1);
-            pin_factory = PINetworkFactory();
-            parfor i=1:number_of_networks
-                n = n_gen();
+            
+            %----------------------------
+            %define a simple simulation setup to test if the generated
+            %network is generating networks that make sense
+            %----------------------------
+            end_time = 120;
+            input = PINSimulationSetup.pulse_input(20);
+            inhibition = PINSimulationSetup.getNoInhibition();
+            simple_simulation_setup = PINSimulationSetup(end_time,input,inhibition);
+            
+            
+            for network_idx=1:number_of_networks
+                %----------------------------------------------
+                %-- generate a good random network           --
+                %----------------------------------------------
+                
+                pin = pin_generator();
                 while 1
-                    pin = pin_factory.getRandomNetwork(n,           ...
-                        @(n) .05+0.1*rand(n,1),                     ...
-                        @(n) .05+0.1*rand(n,1),                     ...
-                        @(sign) sign.*(randn()/8+1),                ...
-                        n_branches_gen(), n_positive_links_gen(), n_negative_links_gen());
-
-                    simulation = PINetworkSimulation(pin,input);
-
-                    [t,y] = simulation.run([0 120]);
-                    count_nonzero = sum(y(end,:) > 0.01 | y(int32(length(t)/2),:) > 0.01);
-                    if count_nonzero == n
-                        instance = {};
-                        instance.pin = pin;
-                        instance.t = t;
-                        instance.y = y;
-                        res{i} = instance;
+                    simulation = PINSimulation(pin,simple_simulation_setup);
+                    [t,y] = simulation.run();
+                    count_nonzero = sum(y(end,:) > 0.05 | y(int32(length(t)/3),:) > 0.05);
+                    if count_nonzero == length(y(end,:))
                         break
                     end
+                    pin = pin_generator();
                 end
+                
+                %----------------------------------------------
+                %-- simulate all the different setups        --
+                %----------------------------------------------
+                
+                pin_simulation_results = cell(1,length(pin_simulation_setups));
+                for setup_idx=1:length(pin_simulation_setups)
+                   pin_simulation_setup = pin_simulation_setups{setup_idx};
+                   simulation = PINSimulation(pin,pin_simulation_setup);
+                   [t,y] = simulation.run();
+                   simulation_results = {};
+                   simulation_results.t = t;
+                   simulation_results.y = y;
+                   pin_simulation_results{setup_idx} = simulation_results;
+                end
+                res{network_idx} = Instance(pin,pin_simulation_results);
+                
             end
             res = Dataset(res);
         end
         
         function res = getEGFRnetwork(self)
+            %Depracated
             pin = PINetwork(6,                    ...
                                   ... %(de)-activation coefficients
                                   [1,1,1,1,1,1],[1,1,1,1,1,1],    ...

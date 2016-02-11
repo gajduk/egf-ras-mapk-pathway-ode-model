@@ -19,8 +19,8 @@ classdef Dataset < handle
                 max_time = max(instance.t)-1;
                 delta_t = max_time/(number_of_timepoints-1);
 
-                for i=0:number_of_timepoints-1
-                    idxs(i+1) = find(instance.t>(delta_t*i),1);
+                for ii=0:number_of_timepoints-1
+                    idxs(ii+1) = find(instance.t>(delta_t*ii),1);
                 end
                 x = instance.pin.f(:);
                 y = instance.y(idxs,:);

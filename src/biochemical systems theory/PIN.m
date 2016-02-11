@@ -1,4 +1,4 @@
-classdef PINetwork < handle
+classdef PIN < handle
     %PINETWORK Describes a prtoein interaction network under the
     %Biochemical Systems Theory model
     
@@ -13,7 +13,7 @@ classdef PINetwork < handle
      end
     
     methods
-        function self = PINetwork(n,A_g,D_g,A_f_s,D_f_s,I_f,f)
+        function self = PIN(n,A_g,D_g,A_f_s,D_f_s,I_f,f)
             if ~ (self.checkN(A_g,n) && self.checkN(D_g,n) && self.checkN(A_f_s,n) && self.checkN(D_f_s,n) && self.checkN(I_f,n))
                 error('Error. There should be one coefficient for each node')
             end

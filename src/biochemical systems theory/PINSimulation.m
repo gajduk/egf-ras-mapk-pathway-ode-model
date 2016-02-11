@@ -1,32 +1,41 @@
-classdef PINetworkSimulation
+classdef PINSimulation < handle
     %PINETWORKSIMULATION Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
         pinetwork = -1;
         y0 = [];%initial conditions
-        input = -1;%function that shows the concentration of input (ligand) over time
+        end_time = -1;
+        input = -1;
+        inhibit = -1;
     end
     
     methods
-        function self = PINetworkSimulation(pinetwork,input,y0)
+        function self = PINSimulation(pinetwork,pinsetup,y0)
             self.pinetwork = pinetwork;
-            
-            self.input = input;
-            if nargin > 2
-                self.y0 = y0;
-            else
-                n = self.pinetwork.n;
+            n = self.pinetwork.n;
+            self.end_time = pinsetup.end_time;
+            self.input = pinsetup.input;
+            self.inhibit = pinsetup.inhibit;
+            if nargin < 4
                 self.y0 = zeros(n,1);
+            else
+                self.y0 = y0;                
             end
+            
         end
         
         function [t,y] = run(self,tspan)
-            [t,y] = ode45(@(t,x) self.ode_model(t,x),tspan,self.y0);
+            if nargin < 2
+               tspan_temp = [0 self.end_time]; 
+            else
+               tspan_temp = tspan;
+            end
+            [t,y] = ode45(@(t,x) self.ode_model(t,x),tspan_temp,self.y0);
         end
         
         function dx = ode_model(self,t,x)
-            input = self.input(t);
+            current_input = self.input(t);
             n = self.pinetwork.n;
             dx = zeros(n,1);
             for i=1:n
@@ -46,9 +55,10 @@ classdef PINetworkSimulation
                        end
                    end
                end
-               A_x_i = A_x_i*a + self.pinetwork.A_g(i) .* (1-x(i)) .* self.pinetwork.I_f(i) .* input;
+               A_x_i = A_x_i*a + self.pinetwork.A_g(i) .* (1-x(i)) .* self.pinetwork.I_f(i) .* current_input;
                dx(i) = A_x_i-D_x_i;
-            end            
+            end
+            dx = self.inhibit(t,x,dx);
         end
     end
     
