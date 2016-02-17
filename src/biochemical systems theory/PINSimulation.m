@@ -42,20 +42,25 @@ classdef PINSimulation < handle
                a = 0;
                A_x_i = self.pinetwork.A_g(i) .* ( (1-x(i)) .^ self.pinetwork.A_f_s(i) );
                D_x_i = self.pinetwork.D_g(i) .* ( x(i) .^ self.pinetwork.D_f_s(i) );
+
                for k=1:n
                    if i == k
                        continue
                    end
                    if self.pinetwork.f(k,i) > 0
                        a = 1;
-                       A_x_i = A_x_i .* ( x(k) .^ self.pinetwork.f(k,i) ); 
+                       if i>k
+                           A_x_i = A_x_i .* real( x(k) .^ self.pinetwork.f(k,i) );
+                       else
+                           A_x_i = A_x_i .* (1 + real( x(k) .^ self.pinetwork.f(k,i) ) );
+                       end
                    else
                        if self.pinetwork.f(k,i) < 0
-                           D_x_i = D_x_i .* ( x(k) .^ -self.pinetwork.f(k,i) ); 
+                           D_x_i = D_x_i .* (1 + .1*real( x(k) .^ -self.pinetwork.f(k,i) )); 
                        end
                    end
                end
-               A_x_i = A_x_i*a + self.pinetwork.A_g(i) .* (1-x(i)) .* self.pinetwork.I_f(i) .* current_input;
+               A_x_i = A_x_i.*a + self.pinetwork.A_g(i) .* (1-x(i)) .* self.pinetwork.I_f(i) .* current_input;
                dx(i) = A_x_i-D_x_i;
             end
             dx = self.inhibit(t,x,dx);

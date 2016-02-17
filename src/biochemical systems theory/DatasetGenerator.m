@@ -17,12 +17,12 @@ classdef DatasetGenerator < handle
             %define a simple simulation setup to test if the generated
             %network is generating networks that make sense
             %----------------------------
-            end_time = 120;
+            end_time_ = 120;
             input = PINSimulationSetup.pulse_input(20);
             inhibition = PINSimulationSetup.getNoInhibition();
-            simple_simulation_setup = PINSimulationSetup(end_time,input,inhibition);
+            simple_simulation_setup = PINSimulationSetup(end_time_,input,inhibition);
             
-            
+                
             parfor network_idx=1:number_of_networks
                 %----------------------------------------------
                 %-- generate a good random network           --
@@ -30,10 +30,16 @@ classdef DatasetGenerator < handle
                 
                 pin = pin_generator();
                 while 1
-                    simulation = PINSimulation(pin,simple_simulation_setup);
-                    [t,y] = simulation.run();
-                    count_nonzero = sum(y(end,:) > 0.05 | y(int32(length(t)/3),:) > 0.05);
-                    if count_nonzero == length(y(end,:))
+                    simulation_ = PINSimulation(pin,simple_simulation_setup);
+                    [t,y] = simulation_.run();
+                    [~,m] = size(y);
+                    check_times = [50,100];
+                    count_nonzero = ones(1,m);
+                    for time_=check_times
+                        idx = max(t(t<time_))==t;
+                        count_nonzero = count_nonzero & y(idx,:) > 0.1;
+                    end
+                    if  sum(count_nonzero) == m
                         break
                     end
                     pin = pin_generator();

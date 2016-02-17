@@ -8,7 +8,6 @@ classdef Dataset < handle
         function self = Dataset(instances)
            self.instances = instances; 
         end
-        
         function dumpJson(self,json_filename)
             previouswd = pwd;
             full_filename = strcat('..\..\output\',json_filename);
@@ -46,10 +45,40 @@ classdef Dataset < handle
     end
     
     methods (Static)
-        function dataset = loadDefault()
-            %Depracated
-            temp = load('100_instances_14_nodes_29_01_16.mat');
-            dataset = Dataset(temp.dataset);
+        function convertFromCsvToJson()
+            csv_filename = 'out1.csv';
+            previouswd = pwd;
+            full_filename = strcat('..\..\octave models\',csv_filename);
+            M = csvread(full_filename,1);
+            t = M(:,1);
+            y = M(:,2:end); 
+            y = bsxfun(@rdivide,y',max(y,[],1)')';
+            p = polyfit(t(1:40),y(1:40,1),20);
+            y1 = polyval(p,t/5);
+            y(:,1) = y1;
+            f = zeros(6,6);
+            f(1,2) = 1;
+            f(2,3) = 1;
+            f(3,4) = 1;
+            f(1,5) = 1;
+            f(1,6) = 1;
+            f(4,2) = -1;
+            f(4,1) = -1;
+            f(6,1) = 1;
+            labels = {'EGFR','Raf','MEK','Erk','Akt','Src'};
+            pin.f = f;
+            pin_simulation_results1.t = t;
+            pin_simulation_results1.y = y;
+            pin_simulation_results = cell(1,2);
+            pin_simulation_results{1,1} = pin_simulation_results1;    
+            pin_simulation_results{1,2} = pin_simulation_results1;
+            instance = Instance(pin,pin_simulation_results);
+            instances = cell(2,1);
+            instances{1,1} = instance;
+            instances{2,1} = instance;
+            dataset = Dataset(instances);
+            dataset.dumpJson('egfr_model.json')
+            cd(previouswd);
         end
     end
     

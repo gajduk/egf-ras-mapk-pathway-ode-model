@@ -43,18 +43,17 @@ classdef PINSimulationSetup < handle
         %-------------------------------------
         %--    Predefined inhibitions       --
         %-------------------------------------
-        function dx = inhibitOneProtein(t,x,dx,protein_idx,time)
-           if t > time
-              dx(protein_idx) = -x(protein_idx); 
-           end
+        function dx = inhibitProteins(t,x,dx,proteins_idx,times)
+            idxs = times < t;
+            dx(proteins_idx(idxs)) = -0.5*x(proteins_idx(idxs)); 
         end
         
-        function res = getInhibitionOfOneProtein(protein_idx,time)
+        function res = getInhibitionOfProteins(protein_idx,time)
             res = {};
             res.label = sprintf('InhibitOneProtein_%d',protein_idx);
-            res.f = @(t,x,dx) PINSimulationSetup.inhibitOneProtein(t,x,dx,protein_idx,time);
+            res.f = @(t,x,dx) PINSimulationSetup.inhibitProteins(t,x,dx,protein_idx,time);
         end
-              
+                     
         function res = getNoInhibition()
             res = {};
             res.f = @(t,x,dx) dx;
