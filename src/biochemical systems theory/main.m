@@ -1,23 +1,20 @@
 function dataset = main()
-    generator = DatasetGenerator();
     n_nodes = 14;
-
     n_networks = 20;
-    pin_simulation_setups = cell(1,10);
-
+    n_setups = 1;
+    n_inhibitions = 2;
+    
+    generator = DatasetGenerator();
+    
+    
     %define the different network setups
-    input = PINSimulationSetup.pulse_input(20);
+    pin_simulation_setups = cell(1,n_setups);
+    input = PINSimulationSetup.oscilatory_input();
     end_time = 160;
-    
-    for i=1:10
-        ps = randi(n_nodes-2,2,1)+2;
-        while length(unique(ps)) < 3
-           ps = randi(n_nodes-2,2,1)+2;
-        end
-        inhibition = PINSimulationSetup.getInhibitionOfProteins(ps,[65,110]);
-        pin_simulation_setups{i} = PINSimulationSetup(end_time,input,inhibition);   
-    end
-    
+        
+    inhibition = PINSimulationSetup.getInhibitionOfProteins([2],[70]);
+    pin_simulation_setups{1} = PINSimulationSetup(end_time,input,inhibition);   
+   
     %define the network generator
     A_g_gen = @(n) .05+0.1*rand(n,1);
     D_g_gen = @(n) .02+0.07*rand(n,1);

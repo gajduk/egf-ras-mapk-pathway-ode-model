@@ -46,16 +46,20 @@ classdef Dataset < handle
     
     methods (Static)
         function convertFromCsvToJson()
-            csv_filename = 'out1.csv';
+            csv_filename = 'egfr_time_series.csv';
             previouswd = pwd;
             full_filename = strcat('..\..\octave models\',csv_filename);
-            M = csvread(full_filename,1);
+            M = csvread(full_filename);
             t = M(:,1);
             y = M(:,2:end); 
-            y = bsxfun(@rdivide,y',max(y,[],1)')';
-            p = polyfit(t(1:40),y(1:40,1),20);
-            y1 = polyval(p,t/5);
-            y(:,1) = y1;
+            %%normalize (not needed)
+            %y = bsxfun(@rdivide,y',max(y,[],1)')';
+            %%stretch the series (not needed)
+            %p = polyfit(t(1:40),y(1:40,1),20);
+            %y1 = polyval(p,t/5);
+            %y(:,1) = y1;
+            
+            %build the mapk network
             f = zeros(6,6);
             f(1,2) = 1;
             f(2,3) = 1;
@@ -65,7 +69,10 @@ classdef Dataset < handle
             f(4,2) = -1;
             f(4,1) = -1;
             f(6,1) = 1;
+            
             labels = {'EGFR','Raf','MEK','Erk','Akt','Src'};
+            
+            %build the dataset
             pin.f = f;
             pin_simulation_results1.t = t;
             pin_simulation_results1.y = y;
@@ -77,6 +84,8 @@ classdef Dataset < handle
             instances{1,1} = instance;
             instances{2,1} = instance;
             dataset = Dataset(instances);
+            
+            
             dataset.dumpJson('egfr_model.json')
             cd(previouswd);
         end

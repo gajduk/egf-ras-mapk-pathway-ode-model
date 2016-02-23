@@ -29,7 +29,7 @@ classdef PINSimulationSetup < handle
         %--    Predefined inputs            --
         %-------------------------------------
         function input = oscilatory_input()
-            input = @(t) (cos(t/10)+1)/2;
+            input = @(t) (cos(t/7-pi)+1)/2;
         end
         
         function input = pulse_input(duration)
