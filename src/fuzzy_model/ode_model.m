@@ -1,4 +1,4 @@
-function dx = ode_model(t,x)
+function dx = ode_model(t,x,kin)
 
 u = x(1);
 up = x(2);
@@ -8,7 +8,6 @@ pa = x(4);
 
 k_cat_kin = 1;
 Km1 = 200;
-kin = 100;
 
 v_kin = kin * k_cat_kin * u / ( Km1 + u );
 

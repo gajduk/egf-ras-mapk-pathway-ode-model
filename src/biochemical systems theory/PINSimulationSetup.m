@@ -29,7 +29,7 @@ classdef PINSimulationSetup < handle
         %--    Predefined inputs            --
         %-------------------------------------
         function input = oscilatory_input()
-            input = @(t) (cos(t/7-pi)+1)/2;
+            input = @(t) (cos(t/5-pi)+1)/2;
         end
         
         function input = pulse_input(duration)
@@ -50,7 +50,7 @@ classdef PINSimulationSetup < handle
         
         function res = getInhibitionOfProteins(protein_idx,time)
             res = {};
-            res.label = sprintf('InhibitOneProtein_%d',protein_idx);
+            res.label = sprintf('InhibitProteins_%d',protein_idx);
             res.f = @(t,x,dx) PINSimulationSetup.inhibitProteins(t,x,dx,protein_idx,time);
         end
                      

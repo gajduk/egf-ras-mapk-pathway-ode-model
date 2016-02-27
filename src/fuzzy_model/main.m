@@ -1,23 +1,23 @@
 clear all
 close all
-total_u = 100;
-total_p = 200;
 
 n_initial = 1000;
 
-up_ratio = randn(1,n_initial)/15.0+0.2;
-up_ratio(up_ratio<0) = 0;
+total_u = ones(1,n_initial)*100;
+total_p = (randn(1,n_initial)/5+2).*total_u;
+%total_p = ones(1,n_initial)*200;
 
-pa_ratio = randn(1,n_initial)/15.0+0.2;
-pa_ratio(pa_ratio<0) = 0;
+kins = (randn(1,n_initial)*10+100);
+u_ratio = randn(1,n_initial)/30+0.1;
+u_ratio(u_ratio<0) = 0;
 
-y0  = [total_u*(1-up_ratio) ; total_u*up_ratio ; total_p*(1-pa_ratio) ; total_p*pa_ratio];
+y0  = [total_u.*(1-u_ratio); total_u.*u_ratio; total_p; total_p*0];
 
 tspan = [0:.1:200];
 
 res = zeros(length(tspan),n_initial);
 parfor i=1:n_initial
-    [t,y] = ode45(@ode_model,tspan,y0(:,i));
+    [t,y] = ode45(@(t,x) ode_model(t,x,kins(i)),tspan,y0(:,i));
     
     u = y(:,1);
     up = y(:,2);
@@ -35,24 +35,49 @@ hist(res(1,:),n_bins)
 title(sprintf('t = 0 [min]   F = %.3f',std(res(1,:))/mean(res(1,:))))
 xlabel('Fraction of active protein')
 xlim(xlims)
+grid on
 subplot(3,2,3)
-hist(res(100,:),n_bins)
+hist(res(50,:),n_bins)
 xlim(xlims)
-title(sprintf('t = 10 [min]   F = %.3f',std(res(100,:))/mean(res(100,:))))
+title(sprintf('t = 5 [min]   F = %.3f',std(res(100,:))/mean(res(100,:))))
 xlabel('Fraction of active protein')
+grid on
 subplot(3,2,5)
 hist(res(300,:),n_bins)
 xlim(xlims)
-title('t = 30 [min]')
-title(sprintf('t = 10 [min]   F = %.3f',std(res(300,:))/mean(res(300,:))))
+title(sprintf('t = 30 [min]   F = %.3f',std(res(300,:))/mean(res(300,:))))
 xlabel('Fraction of active protein')
+grid on
 
 
-subplot(3,2,4)
-for i=1:n_initial
-    plot(tspan,res(:,i),'b')
-    hold on
+subplot(3,2,2)
+
+px=[tspan,fliplr(tspan)];
+std_res = std(res(:,:)');
+mean_res = mean(res(:,:)');
+min_res = min(res(:,:)');
+max_res = max(res(:,:)');
+
+for k=1:10
+    py=[mean_res-std_res*k/3, fliplr(mean_res+std_res*k/3)];
+    patch(px,py,1,'FaceColor','b','FaceAlpha',0.1,'EdgeColor','none');
 end
-xlim([0 30])
+hold on
+%plot(tspan,min_res,'k')
+%plot(tspan,max_res,'k')
+xlim([0 40])
 xlabel('Time [min]')
 ylabel('Fraction of active protein')
+
+subplot(3,2,4)
+plot(tspan,std(res')')
+xlim([0 40])
+xlabel('Time [min]')
+ylabel('Std')
+
+
+subplot(3,2,6)
+plot(tspan,std(res')'./mean(res')')
+xlim([0 40])
+xlabel('Time [min]')
+ylabel('Fano factor')
