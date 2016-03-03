@@ -10,7 +10,7 @@ classdef DatasetGenerator < handle
         end
         
         function res = generate(self,number_of_networks,pin_simulation_setups,pin_generator)
-            
+
             res = cell(number_of_networks,1);
             
             %----------------------------
@@ -23,21 +23,25 @@ classdef DatasetGenerator < handle
             simple_simulation_setup = PINSimulationSetup(end_time_,input,inhibition);
             
                 
-            parfor network_idx=1:number_of_networks
+            for network_idx=1:number_of_networks
                 %----------------------------------------------
                 %-- generate a good random network topology  --
                 %----------------------------------------------
                 
                 pin = pin_generator();
+                tries = 1;
+                tries_nonzero = 0;
+                tries_nonequal = 0;
                 while 1
                     simulation_ = PINSimulation(pin,simple_simulation_setup);
                     [t,y] = simulation_.run();
                     [~,m] = size(y);
-                    check_times_nonzero = [50,100];
-                    count_nonzero = ones(1,m);
+                    plot(t,y);
+                    check_times_nonzero = [50,100,150];
+                    count_nonzero = zeros(1,m);
                     for time_=1:length(check_times_nonzero)
                         idx = max(t(t<check_times_nonzero(time_)))==t;
-                        count_nonzero = count_nonzero & y(idx,:) > 0.05;
+                        count_nonzero = count_nonzero | y(idx,:) > 0.01;
                     end
                     check_times_nonequal = [100,150];
                     count_nonequal = ones(1,m);
@@ -51,7 +55,9 @@ classdef DatasetGenerator < handle
                     if  sum(count_nonzero) == m && sum(count_nonequal) > m*0.4  && sum(count_nonequal) < m*0.8
                         break
                     end
-                    
+                    tries = tries+1
+                    tries_nonzero = tries_nonzero+(sum(count_nonzero) == m)
+                    tries_nonequal = tries_nonequal+(sum(count_nonequal) > m*0.4  && sum(count_nonequal) < m*0.8)
                     pin = pin_generator();
                 end
                 
@@ -111,4 +117,5 @@ classdef DatasetGenerator < handle
     end
     
 end
+
 
