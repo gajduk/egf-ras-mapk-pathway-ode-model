@@ -11,13 +11,13 @@ classdef PINSimulationOriginal < handle
     end
     
     methods
-        function self = PINSimulation(pinetwork,pinsetup,y0)
+        function self = PINSimulationOriginal(pinetwork,pinsetup,y0)
             self.pinetwork = pinetwork;
             n = self.pinetwork.n;
             self.end_time = pinsetup.end_time;
             self.input = pinsetup.input;
             self.inhibit = pinsetup.inhibit;
-            if nargin < 4
+            if nargin < 3
                 self.y0 = zeros(n,1);
             else
                 self.y0 = y0;                
