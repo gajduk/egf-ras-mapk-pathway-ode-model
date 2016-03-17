@@ -1,7 +1,7 @@
 function dataset = main()
     n_nodes = 14;
     n_networks = 10;
-    n_setups = 1;
+    n_setups = 5;
     
     generator = DatasetGenerator();
     
@@ -16,16 +16,16 @@ function dataset = main()
     pin_simulation_setups{1} = PINSimulationSetup(end_time,p_input,inhibition);
 
     inhibition = PINSimulationSetup.getInhibitionOfProteins([2],[70]);
-    pin_simulation_setups{1} = PINSimulationSetup(end_time,p_input,inhibition);
+    pin_simulation_setups{2} = PINSimulationSetup(end_time,p_input,inhibition);
 
     inhibition = PINSimulationSetup.getInhibitionOfProteins([2,15],[60,110]);
-    pin_simulation_setups{1} = PINSimulationSetup(end_time,p_input,inhibition);
+    pin_simulation_setups{3} = PINSimulationSetup(end_time,p_input,inhibition);
 
     inhibition = PINSimulationSetup.getNoInhibition();
-    pin_simulation_setups{1} = PINSimulationSetup(end_time,o_input,inhibition);
+    pin_simulation_setups{4} = PINSimulationSetup(end_time,o_input,inhibition);
 
     inhibition = PINSimulationSetup.getInhibitionOfProteins([2],[70]);
-    pin_simulation_setups{1} = PINSimulationSetup(end_time,o_input,inhibition);
+    pin_simulation_setups{5} = PINSimulationSetup(end_time,o_input,inhibition);
     
     %define the network generator
 
