@@ -28,7 +28,6 @@ classdef DatasetGenerator < handle
                    simulation_results = {};
                    simulation_results.t = t;
                    simulation_results.y = real(y);
-                   %plot(t,y)
                    simulation_results.inhibit = pin_simulation_setup.inhibit_label;
                    pin_simulation_results{setup_idx} = simulation_results;
                 end

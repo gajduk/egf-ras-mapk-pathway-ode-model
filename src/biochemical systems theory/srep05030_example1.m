@@ -5,8 +5,9 @@ A = [0 7.2 9.3 0 0 -1;
      8.5 6.7 -7.7 0 -9 0;
      -5 0 0 0 0 0;
      0 2.5 0 10 -2.5 0];
-[t,y] = ode45(@(t,x) ode_model(t,x,A),[0 10],randn(6,1));
 
+[t,y] = ode45(@(t,x) ode_model(t,x,A),[0 10],randn(6,1));
+plot(t,y)
 pin.n = 6;
 pin.f = A;
 

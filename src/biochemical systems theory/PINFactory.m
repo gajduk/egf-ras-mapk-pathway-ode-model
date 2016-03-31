@@ -9,6 +9,7 @@ classdef PINFactory < handle
         n_branches_gen = @() 2;
         n_positive_feedback_gen = @() 2;
         n_negative_feedback_gen = @() 5;
+        n_pins_to_combine = 1;
     end
     
     methods
@@ -19,7 +20,7 @@ classdef PINFactory < handle
         function random_pin_generator = getRandomNetworkGenerator(self)
            random_pin_generator =  @() self.getRandomPIN(self.n_nodes_gen, ...
                self.A_g_gen,self.D_g_gen,self.f_gen,self.n_branches_gen,       ...
-               self.n_positive_feedback_gen,self.n_negative_feedback_gen);
+               self.n_positive_feedback_gen,self.n_negative_feedback_gen,self.n_pins_to_combine);
         end
         
         function adjecency_matrix = getRandomNetworkTopology(self,n_nodes_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen)
@@ -94,13 +95,12 @@ classdef PINFactory < handle
         
         function res = checkPIN(self,pin)
             end_time_ = 160;
-            input = PINSimulationSetup.pulse_input(20);
+            input = PINSimulationSetup.pulse_input(1000);
             inhibition = PINSimulationSetup.getNoInhibition();
             simple_simulation_setup = PINSimulationSetup(end_time_,input,inhibition);
             simulation_ = PINSimulationOriginal(pin,simple_simulation_setup);
             [t,y] = simulation_.run();
             [~,m] = size(y);
-            plot(t,y);
             check_times_nonzero = [50,100,150];
             count_nonzero = zeros(1,m);
             for time_=1:length(check_times_nonzero)
@@ -139,17 +139,22 @@ classdef PINFactory < handle
             end
         end
         
-        function pin = getRandomPIN(self,n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen)
-            pins = cell(3,1);
-            for i=1:3
-               pins{i} = self.getRandomPINInternal(n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen); i
-            end
-            pin = self.combinePINs(pins,f_gen);
-            for i=1:100
-                if self.checkPIN(pin)
-                    break
-                end   
+        function pin = getRandomPIN(self,n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen,n_pins_to_combine)
+            if n_pins_to_combine == 1
+               pin = self.getRandomPINInternal(n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen);
+            else
+                pins = cell(n_pins_to_combine,1);
+                for i=1:n_pins_to_combine
+                   pins{i} = self.getRandomPINInternal(n_nodes_gen,A_g_gen,D_g_gen,f_gen,n_branches_gen,n_positive_feedback_gen,n_negative_feedback_gen); i
+                end
                 pin = self.combinePINs(pins,f_gen);
+                for i=1:100
+                    if self.checkPIN(pin)
+                        break
+                    end   
+                    pin = self.combinePINs(pins,f_gen);
+                end
+                
             end
         end
         
@@ -195,16 +200,6 @@ classdef PINFactory < handle
         
     end
     methods (Static)
-        function pin_factory = get14NodesFactoryOLD()
-            pin_factory = PINFactory();
-            pin_factory.A_g_gen = @(n) .06+0.1*rand(n,1);
-            pin_factory.D_g_gen = @(n) .02+0.07*rand(n,1);
-            pin_factory.f_gen = @(sign) sign.*(0.15*randn()+1);
-            pin_factory.n_nodes_gen = @() 14;
-            pin_factory.n_branches_gen = @() 2;
-            pin_factory.n_positive_feedback_gen = @() 2;
-            pin_factory.n_negative_feedback_gen = @() 5;
-        end
         function pin_factory = get14NodesFactory()
             pin_factory = PINFactory();
             pin_factory.A_g_gen = @(n) .06+0.1*rand(n,1);
@@ -214,6 +209,12 @@ classdef PINFactory < handle
             pin_factory.n_branches_gen = @() 2;
             pin_factory.n_positive_feedback_gen = @() 2;
             pin_factory.n_negative_feedback_gen = @() 4;
+            pin_factory.n_pins_to_combine = 1;
+        end
+        
+        function pin_factory = get42NodesFactory()
+            pin_factory = PINFactory.get14NodesFactory();
+            pin_factory.n_pins_to_combine = 3;
         end
         
         function pin_factory = get30NodesFactory()
@@ -229,6 +230,7 @@ classdef PINFactory < handle
             pin_factory.n_positive_feedback_gen = @() 0;
             pin_factory.n_negative_feedback_gen = @() 0;
             pin_factory.link_strength_gen = @(a) 10;
+            pin_factory.n_pins_to_combine = 1;
         end
     end
     

@@ -21,12 +21,11 @@ classdef PINSimulation < handle
             else
                 self.y0 = y0;                
             end
-            
         end
         
         function [t,y] = run(self,tspan)
             if nargin < 2
-               tspan_temp = [0 self.end_time]; 
+               tspan_temp = 0:.1:self.end_time; 
             else
                tspan_temp = tspan;
             end

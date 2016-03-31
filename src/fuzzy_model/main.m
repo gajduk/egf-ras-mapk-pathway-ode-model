@@ -1,7 +1,7 @@
 clear all
 close all
 
-n_initial = 1000;
+n_initial = 100;
 
 total_u = ones(1,n_initial)*100;
 total_p = (randn(1,n_initial)/5+2).*total_u;

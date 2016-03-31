@@ -36,8 +36,16 @@ classdef PIN < handle
         function good = checkNN(~,vector,n)
            good = all(size(vector) == [n,n]); 
         end
-        
-        function dx = ode_model(self,t,x,current_input)
+         function dx = ode_model(self,t,x,current_input)
+            x = x+.0000000001;
+            A_x = self.A_g .* ( (1-x) .^ self.A_f_s );
+            D_x = self.D_g .* ( x .^ self.D_f_s );
+            A_x = A_x .*  prod( real( bsxfun(@power,x,-(self.f>0).*self.f) ))';
+            D_x = D_x .*  prod( real( bsxfun(@power,x,(self.f<0).*self.f) ))';
+            A_x = A_x + (1-x) .* self.I_f' .* current_input;
+            dx = A_x-D_x;
+        end
+        function dx = ode_model_backup(self,t,x,current_input)
             A_x = self.A_g .* ( (1-x) .^ self.A_f_s );
             D_x = self.D_g .* ( x .^ self.D_f_s );
             A_x = A_x .*  prod( real( bsxfun(@power,x,(self.f>0).*self.f) ))';

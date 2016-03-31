@@ -45,7 +45,7 @@ classdef PINSimulationSetup < handle
         %-------------------------------------
         function dx = inhibitProteins(t,x,dx,proteins_idx,times)
             idxs = times < t;
-            dx(proteins_idx(idxs)) = -0.5*x(proteins_idx(idxs)); 
+            dx(proteins_idx(idxs)) = -0.85*x(proteins_idx(idxs)); 
         end
         
         function res = getInhibitionOfProteins(protein_idx,time)
