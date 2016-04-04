@@ -24,23 +24,8 @@ h(6,2) = -0.27;
 h(6,4) = -0.95;
 h(6,5) = -0.375;
 
-[t,y] = ode45(@(t,x) ode_model(t,x,h),[0:.2:4],rand(6,1)*2);
+[t,y] = ode45(@(t,x) ode_model(t,x,h),[0:.2:4],rand(6,1));
 plot(t,y)
-pin.n = 6;
-pin.f = h;
-
-pin_simulation_result.t = t;
-pin_simulation_result.y = y;
-pin_simulation_results = cell(1,1);
-pin_simulation_results{1} = pin_simulation_result;
-
-instance = Instance(pin,pin_simulation_results);
-
-instances = cell(2,1);
-instances{1} = instance;
-instances{2} = instance;
-dataset = Dataset(instances);
-dataset.dumpJson('example2.json');
 
 end
 
@@ -51,10 +36,10 @@ function dx = ode_model(t,x,h)
        for k=1:6
            temp = 0.0;
            if h(i,k) < 0
-               temp = 1/(1+x(k).*5);
+               temp = 1.0/(1.0+x(k).^5);
            end
            if h(i,k) > 0
-               temp = x(k).*5/(1+x(k).*5);
+               temp = x(k).^5/(1.0+x(k).^5);
            end
            dx(i) = dx(i) + abs(h(i,k))*temp;
        end
