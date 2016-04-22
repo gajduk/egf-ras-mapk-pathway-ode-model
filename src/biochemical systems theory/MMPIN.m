@@ -22,8 +22,16 @@ classdef MMPIN < handle
     
     
     properties
-        n = -1;%number of nodes in the netowrk (equal to the number of proteins)x`
-        
+        n = -1;% number of nodes in the netowrk (equal to the number of proteins)x`
+        k_kin = -1;% activation coefficients & one for each node
+        k_phos = -1;% deactivation coefficients & one for each node
+        K_m1 = -1;%  activating half rate & one for each node
+        K_m2 = -1;%  deactivating half rate & one for each node
+        I_kin = -1;% activation by input signal (ligand) & one for each node
+        A_pos = -1;% positive regulation strengths, 1 means no link & one for each link
+        K_pos = -1;% positive regulation denominator & one for each link
+        A_neg = -1;% negative regulation strengths, 1 means no link & one for each link
+        K_neg = -1;% negative regulation denominator & one for each link
      end
     
     methods

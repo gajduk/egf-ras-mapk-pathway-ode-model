@@ -2,7 +2,7 @@ classdef MMPINFactory < PINFactory
     %PINETWORKFACTORY Constructs random or specific PINetworks
     
     properties
-        link_strength_gen = @(a) rand(2)+2;
+        link_strength_gen = @(a) rand()+2;
     end
     
     methods
