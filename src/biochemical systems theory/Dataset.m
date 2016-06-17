@@ -8,6 +8,7 @@ classdef Dataset < handle
         function self = Dataset(instances)
            self.instances = instances; 
         end
+        
         function dumpJson(self,json_filename)
             previouswd = pwd;
             full_filename = strcat('..\..\output\',json_filename);

@@ -26,7 +26,7 @@ h(6,5) = -0.375;
 
 [t,y] = ode45(@(t,x) ode_model(t,x,h),[0:.2:4],rand(6,1));
 plot(t,y)
-
+y
 end
 
 function dx = ode_model(t,x,h)
@@ -36,10 +36,10 @@ function dx = ode_model(t,x,h)
        for k=1:6
            temp = 0.0;
            if h(i,k) < 0
-               temp = 1.0/(1.0+x(k).^5);
+               temp = 1.0./(1.0+x(k).^5);
            end
            if h(i,k) > 0
-               temp = x(k).^5/(1.0+x(k).^5);
+               temp = x(k).^5./(1.0+x(k).^5);
            end
            dx(i) = dx(i) + abs(h(i,k))*temp;
        end

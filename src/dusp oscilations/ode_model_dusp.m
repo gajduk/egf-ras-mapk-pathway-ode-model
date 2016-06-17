@@ -1,7 +1,7 @@
-function dx = ode_model1(t,x)
+function dx = ode_model_dusp(t,x,input)
 
 %input signal, can be a funciton of t
-u = 1;
+u = input(t);
 
 %1
 k1_R = .5;

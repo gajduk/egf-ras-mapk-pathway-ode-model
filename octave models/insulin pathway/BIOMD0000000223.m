@@ -1306,10 +1306,14 @@ x0 = x(times_to_plot(1),protein_idxs_to_plot);
 for i=1:length(times_to_plot)
 	res(i,:) = (x0-res(i,:))./x0;
 endfor
-figure;
-plot(res);
-legend(legends)
-set(gca,'xtick',[1,2,3,4,5])
-set(gca,'xticklabel', {'0', '1', '10', '30', '100'});
-xlabel('Time [min]')
-ylabel('Concentration')
+
+if 0
+    figure;
+    plot(res);
+    legend(legends)
+    set(gca,'xtick',[1,2,3,4,5])
+    set(gca,'xticklabel', {'0', '1', '10', '30', '100'});
+    xlabel('Time [min]')
+    ylabel('Concentration')
+endif
+csvwrite('time_series_BIOMD0000000223.csv',res)

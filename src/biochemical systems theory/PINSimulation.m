@@ -16,7 +16,7 @@ classdef PINSimulation < handle
             self.end_time = pinsetup.end_time;
             self.input = pinsetup.input;
             self.inhibit = pinsetup.inhibit;
-            if nargin < 4
+            if nargin < 3
                 self.y0 = zeros(self.pin.n,1);
             else
                 self.y0 = y0;                
@@ -25,7 +25,7 @@ classdef PINSimulation < handle
         
         function [t,y] = run(self,tspan)
             if nargin < 2
-               tspan_temp = 0:.1:self.end_time; 
+               tspan_temp = 0:(self.end_time/100):self.end_time; 
             else
                tspan_temp = tspan;
             end

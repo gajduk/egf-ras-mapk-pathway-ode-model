@@ -1,4 +1,4 @@
-classdef MMPIN < handle
+classdef MMPIN < PINAbstract
     %PINETWORK Describes a prtoein interaction network under the
     %Micahelis Menten Kinetics
     %*) activation function is defined as
@@ -22,7 +22,6 @@ classdef MMPIN < handle
     
     
     properties
-        n = -1;% number of nodes in the netowrk (equal to the number of proteins)x`
         k_kin = -1;% activation coefficients & one for each node
         k_phos = -1;% deactivation coefficients & one for each node
         K_m1 = -1;%  activating half rate & one for each node
@@ -36,13 +35,13 @@ classdef MMPIN < handle
     
     methods
         function self = MMPIN(n,k_kin,k_phos,K_m1,K_m2,I_kin,A_pos,K_pos,A_neg,K_neg)
+            self = self@PINAbstract(n,A_neg+A_pos);
             if ~ (self.checkN(k_kin,n) && self.checkN(k_phos,n) && self.checkN(K_m1,n) && self.checkN(K_m2,n) && self.checkN(I_kin,n))
                 error('Error. There should be one coefficient for each node')
             end
             if ~ (self.checkNN(A_pos,n) && self.checkNN(K_pos,n) && self.checkNN(A_neg,n) && self.checkNN(K_neg,n) )
                 error('Error. There should be one coefficient for each node-node pair')
             end
-            self.n = n;
             self.k_kin = k_kin;
             self.k_phos = k_phos;
             self.K_m1 = K_m1;
