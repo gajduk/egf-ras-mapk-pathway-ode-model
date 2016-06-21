@@ -22,6 +22,10 @@ classdef PINAbstract  < handle
         function good = checkNN(~,vector,n)
            good = all(size(vector) == [n,n]); 
         end
+        
+        function y0 = y0(self)
+            y0 = zeros(self.n,1);
+        end
     end
     
     methods (Abstract)

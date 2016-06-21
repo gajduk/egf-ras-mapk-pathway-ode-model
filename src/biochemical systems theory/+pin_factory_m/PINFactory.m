@@ -91,7 +91,6 @@ classdef (Abstract) PINFactory < handle
             %simulation_ = PINSimulationOriginal(pin,simple_simulation_setup);
             simulation_ = self.getSimpleSimulation(pin);
             [t,y] = simulation_.run();
-            plot(t,y)
             [~,m] = size(y);
             check_times_nonzero = [1.1,2.1,3.1]*(simulation_.end_time/5.0);
             count_nonzero = zeros(1,m);
@@ -160,7 +159,7 @@ classdef (Abstract) PINFactory < handle
     
     methods (Static)
         function pin_factory = get14NodesFactory()
-            pin_factory = BSTPINFactory();
+            pin_factory = pin_factory_m.BSTPINFactory();
             pin_factory.A_g_gen = @(n) .06+0.1*rand(n,1);
             pin_factory.D_g_gen = @(n) .02+0.07*rand(n,1);
             pin_factory.f_gen = @(sign) sign.*(0.1*randn()+1);
@@ -177,7 +176,7 @@ classdef (Abstract) PINFactory < handle
         end
         
         function pin_factory = get30NodesFactory()
-            pin_factory = MMPINFactory();
+            pin_factory = pin_factory_m.MMPINFactory();
             pin_factory.n_nodes_gen = @() 30;
             pin_factory.n_branches_gen = @() rand(5)+5;
             pin_factory.n_positive_feedback_gen = @() rand()*4+2;
@@ -193,7 +192,7 @@ classdef (Abstract) PINFactory < handle
         end
         
         function pin_factory = get10NodesFactory()
-            pin_factory = tanhPINFactory();
+            pin_factory = pin_factory_m.tanhPINFactory();
             pin_factory.n_nodes_gen = 10;
             pin_factory.n_branches_gen = 2;
             pin_factory.n_positive_feedback_gen = @() rand()*3;

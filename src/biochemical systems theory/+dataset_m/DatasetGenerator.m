@@ -23,7 +23,8 @@ classdef DatasetGenerator < handle
                 
                 for setup_idx=1:length(pin_simulation_setups)
                    pin_simulation_setup = pin_simulation_setups{setup_idx};
-                   simulation = PINSimulationOriginal(pin,pin_simulation_setup);
+                   %simulation = PINSimulationOriginal(pin,pin_simulation_setup);
+                   simulation = simulation_m.PINSimulation(pin,pin_simulation_setup,pin.y0());
                    [t,y] = simulation.run();
                    simulation_results = {};
                    simulation_results.t = t;
@@ -31,10 +32,10 @@ classdef DatasetGenerator < handle
                    simulation_results.inhibit = pin_simulation_setup.inhibit_label;
                    pin_simulation_results{setup_idx} = simulation_results;
                 end
-                res{network_idx} = Instance(pin,pin_simulation_results);
+                res{network_idx} = dataset_m.Instance(pin,pin_simulation_results);
                 
             end
-            res = Dataset(res);
+            res = dataset_m.Dataset(res);
         end
         
         function res = getEGFRnetwork(self)

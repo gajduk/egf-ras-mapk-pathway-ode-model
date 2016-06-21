@@ -1,4 +1,4 @@
-classdef tanhPINFactory < PINFactory
+classdef tanhPINFactory < pin_factory_m.PINFactory
     %PINETWORKFACTORY Constructs random or specific PINetworks
     
     properties
@@ -9,7 +9,6 @@ classdef tanhPINFactory < PINFactory
     methods
         function self = tanhPINFactory()
         end
-        
         
         function pinetwork = getParametersForTopology(self,topology)
            [n,~] = size(topology);
@@ -29,16 +28,16 @@ classdef tanhPINFactory < PINFactory
            for i=1:n
               k_phos(i) = self.k_phos_gen(); 
            end
-           pinetwork = tanhPIN(n,k_phos,f);
+           pinetwork = pin_m.tanhPIN(n,k_phos,f);
         end
         
          function simple_simulation = getSimpleSimulation(self,pin)
             end_time_ = 4;
-            input = PINSimulationSetup.pulse_input(1000);
-            inhibition = PINSimulationSetup.getNoInhibition();
+            input = simulation_m.PINSimulationSetup.pulse_input(1000);
+            inhibition = simulation_m.PINSimulationSetup.getNoInhibition();
             y0 = rand(pin.n,1)*20-10;
-            simple_simulation_setup = PINSimulationSetup(end_time_,input,inhibition);
-            simple_simulation = PINSimulation(pin,simple_simulation_setup,y0);
+            simple_simulation_setup = simulation_m.PINSimulationSetup(end_time_,input,inhibition);
+            simple_simulation = simulation_m.PINSimulation(pin,simple_simulation_setup,y0);
          end
         
         function res = combinePINs(self,pins)

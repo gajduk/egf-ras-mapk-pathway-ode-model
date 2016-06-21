@@ -15,7 +15,7 @@ classdef PINSimulationSetup < handle
             self.end_time = end_time;
             self.input = input;
             if nargin < 3
-                temp_inhibit = PINSimulationSetup.getNoInhibition();
+                temp_inhibit = simulation_m.PINSimulationSetup.getNoInhibition();
             else
                 temp_inhibit = inhibit;          
             end
@@ -45,13 +45,13 @@ classdef PINSimulationSetup < handle
         %-------------------------------------
         function dx = inhibitProteins(t,x,dx,proteins_idx,times)
             idxs = times < t;
-            dx(proteins_idx(idxs)) = -0.85*x(proteins_idx(idxs)); 
+            dx(proteins_idx(idxs)) = -10*x(proteins_idx(idxs)); 
         end
         
         function res = getInhibitionOfProteins(protein_idx,time)
             res = {};
             res.label = sprintf('InhibitProteins_%d',protein_idx);
-            res.f = @(t,x,dx) PINSimulationSetup.inhibitProteins(t,x,dx,protein_idx,time);
+            res.f = @(t,x,dx) simulation_m.PINSimulationSetup.inhibitProteins(t,x,dx,protein_idx,time);
         end
                      
         function res = getNoInhibition()

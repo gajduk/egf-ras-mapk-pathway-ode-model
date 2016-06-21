@@ -1,4 +1,4 @@
-classdef BSTPINFactory < PINFactory
+classdef BSTPINFactory < pin_factory_m.PINFactory
     %PINETWORKFACTORY Constructs random or specific PINetworks unser the
     %Biochemical Systems Theory model
     

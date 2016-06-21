@@ -1,4 +1,4 @@
-classdef tanhPIN < PINAbstract
+classdef tanhPIN < pin_m.PINAbstract
     %PINETWORK Describes a protoein interaction network using tanh dynamics
     % the odes are taken from Levnjatich paper in srep on
     % derivative-variable ..
@@ -11,7 +11,7 @@ classdef tanhPIN < PINAbstract
     
     methods
         function self = tanhPIN(n,k_phos,f)
-            self = self@PINAbstract(n,f);
+            self = self@pin_m.PINAbstract(n,f);
             if ~ (self.checkN(k_phos,n))
                 error('Error. There should be one coefficient for each node')
             end
@@ -21,6 +21,10 @@ classdef tanhPIN < PINAbstract
         function dx = ode_model(self,t,x,current_input)
             mp = x;
             dx = -self.k_phos.*mp + (tanh(mp)'*self.f)';
+        end
+        
+        function y0 = y0(self)
+            y0 = rand(self.n,1)*20-10;
         end
     end
     
